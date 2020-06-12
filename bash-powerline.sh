@@ -2,6 +2,7 @@
 
 ## Uncomment to disable git info
 #POWERLINE_GIT=0
+#POWERLINE_CONDA=0
 
 __powerline() {
     # Colors
@@ -10,12 +11,14 @@ __powerline() {
     COLOR_GIT=${COLOR_GIT:-'\[\033[0;36m\]'} # cyan
     COLOR_SUCCESS=${COLOR_SUCCESS:-'\[\033[0;32m\]'} # green
     COLOR_FAILURE=${COLOR_FAILURE:-'\[\033[0;31m\]'} # red
+    COLOR_CONDA=${COLOR_CONDA:-'\[\033[0;35m\]'} #margenta
 
     # Symbols
     SYMBOL_GIT_BRANCH=${SYMBOL_GIT_BRANCH:-⑂}
     SYMBOL_GIT_MODIFIED=${SYMBOL_GIT_MODIFIED:-*}
     SYMBOL_GIT_PUSH=${SYMBOL_GIT_PUSH:-↑}
     SYMBOL_GIT_PULL=${SYMBOL_GIT_PULL:-↓}
+    SYMBOL_CONDA=${SYMBOL_CONDA:-""}
 
     if [[ -z "$PS_SYMBOL" ]]; then
       case "$(uname)" in
@@ -57,7 +60,14 @@ __powerline() {
         done < <($git_eng status --porcelain --branch 2>/dev/null)  # note the space between the two <
 
         # print the git branch segment without a trailing newline
-        printf " $ref$marks"
+        printf "($ref $marks)"
+    }
+
+    __condaenv() {
+        [[ $POWERLINE_CONDA = 0 ]] && return # disabled
+        [[ -z "${CONDA_PREFIX}" ]] && return # no conda active
+        local condaenv="$(basename $CONDA_PREFIX)"
+        printf "{$SYMBOL_CONDA$condaenv}"
     }
 
     ps1() {
@@ -77,13 +87,16 @@ __powerline() {
         # Related fix in git-bash: https://github.com/git/git/blob/9d77b0405ce6b471cb5ce3a904368fc25e55643d/contrib/completion/git-prompt.sh#L324
         if shopt -q promptvars; then
             __powerline_git_info="$(__git_info)"
+            __powerline_conda_info="$(__condaenv)"
             local git="$COLOR_GIT\${__powerline_git_info}$COLOR_RESET"
+            local conda="$COLOR_CONDA\${__powerline_conda_info}$COLOR_RESET"
         else
             # promptvars is disabled. Avoid creating unnecessary env var.
             local git="$COLOR_GIT$(__git_info)$COLOR_RESET"
+            local conda="$COLOR_CONDA$(__condaenv)$COLOR_RESET"
         fi
 
-        PS1="$cwd$git$symbol"
+        PS1="[$host:$cwd]$conda$git$symbol "
     }
 
     PROMPT_COMMAND="ps1${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
