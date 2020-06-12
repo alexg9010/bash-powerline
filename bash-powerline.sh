@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-## Uncomment to disable git info
+## Uncomment to disable
 #POWERLINE_GIT=0
 #POWERLINE_CONDA=0
+#POWERLINE_SPLITPATH=0
 
 __powerline() {
     # Colors
@@ -20,6 +21,8 @@ __powerline() {
     SYMBOL_GIT_PULL=${SYMBOL_GIT_PULL:-↓}
     SYMBOL_CONDA=${SYMBOL_CONDA:-""}
 
+    # Max length of full path
+    MAX_PATH_LENGTH=${MAX_PATH_LENGTH:-30}
     if [[ -z "$PS_SYMBOL" ]]; then
       case "$(uname)" in
           Darwin)   PS_SYMBOL='';;
@@ -70,6 +73,20 @@ __powerline() {
         printf "{$SYMBOL_CONDA$condaenv}"
     }
 
+    __splitpwd() {
+        # Use ~ to represent $HOME prefix
+        local pwd=$(pwd | sed -e "s|^$HOME|~|")
+        if [[ ${#pwd} -gt $MAX_PATH_LENGTH ]]; then
+            local IFS='/'
+            read -ra split <<< "$pwd"
+            local splitlength=${#split[@]}
+            if [[ $splitlength -ge 3 ]]; then 
+                pwd="~/${split[1]}/.../${split[$splitlength-1]}"
+            fi
+        fi
+        printf "$pwd"
+    }
+
     ps1() {
         # Check the exit code of the previous command and display different
         # colors in the prompt accordingly. 
@@ -80,6 +97,11 @@ __powerline() {
         fi
 
         local cwd="$COLOR_CWD\w$COLOR_RESET"
+        if [[ $POWERLINE_SPLITPATH = 0  ]]; then
+            local cwd="$COLOR_CWD\W$COLOR_RESET"
+        else
+            local cwd="$COLOR_CWD$(__splitpwd)$COLOR_RESET"
+        fi    
         # Bash by default expands the content of PS1 unless promptvars is disabled.
         # We must use another layer of reference to prevent expanding any user
         # provided strings, which would cause security issues.
