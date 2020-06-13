@@ -15,7 +15,7 @@ __powerline() {
     COLOR_CONDA=${COLOR_CONDA:-'\[\033[0;35m\]'} #margenta
 
     # Symbols
-    SYMBOL_GIT_BRANCH=${SYMBOL_GIT_BRANCH:-⑂}
+    SYMBOL_GIT_BRANCH=${SYMBOL_GIT_BRANCH:-""}
     SYMBOL_GIT_MODIFIED=${SYMBOL_GIT_MODIFIED:-*}
     SYMBOL_GIT_PUSH=${SYMBOL_GIT_PUSH:-↑}
     SYMBOL_GIT_PULL=${SYMBOL_GIT_PULL:-↓}
@@ -23,6 +23,25 @@ __powerline() {
 
     # Max length of full path
     MAX_PATH_LENGTH=${MAX_PATH_LENGTH:-30}
+
+    # COLOR_DEFAULT='\[\e[39m\]'
+    # COLOR_BLACK='\[\e[30m\]'    # Color # 0
+    # COLOR_RED='\[\e[31m\]'      # Color # 1
+    # COLOR_GREEN='\[\e[32m\]'    # Color # 2
+    # COLOR_YELLOW='\[\e[33m\]'   # Color # 3
+    # COLOR_BLUE='\[\e[34m\]'     # Color # 4
+    # COLOR_MAGENTA='\[\e[35m\]'  # Color # 5
+    # COLOR_CYAN='\[\e[36m\]'     # Color # 6
+    # COLOR_LGRAY='\[\e[37m\]'    # Color # 7
+    # COLOR_DGRAY='\[\e[90m\]'    # Color # 8
+    # COLOR_LRED='\[\e[91m\]'     # Color # 9
+    # COLOR_LGREEN='\[\e[92m\]'   # Color # 10
+    # COLOR_LYELLOW='\[\e[93m\]'  # Color # 11
+    # COLOR_LBLUE='\[\e[94m\]'    # Color # 12
+    # COLOR_LMAGENTA='\[\e[95m\]' # Color # 13
+    # COLOR_LCYAN='\[\e[96m\]'    # Color # 14
+    # COLOR_WHITE='\[\e[97m\]'    # Color # 15
+
     if [[ -z "$PS_SYMBOL" ]]; then
       case "$(uname)" in
           Darwin)   PS_SYMBOL='';;
@@ -96,7 +115,8 @@ __powerline() {
             local symbol="$COLOR_FAILURE $PS_SYMBOL $COLOR_RESET"
         fi
 
-        local cwd="$COLOR_CWD\w$COLOR_RESET"
+        local host="$COLOR_CWD\u@\h$COLOR_RESET"
+
         if [[ $POWERLINE_SPLITPATH = 0  ]]; then
             local cwd="$COLOR_CWD\W$COLOR_RESET"
         else
