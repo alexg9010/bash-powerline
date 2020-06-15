@@ -1,8 +1,10 @@
 # bash-powerline
 
+This Repo is 
+
 Powerline for Bash in pure Bash script.
 
-![bash-powerline](https://raw.github.com/riobard/bash-powerline/master/screenshots/solarized-light.png)
+![bash-powerline](screenshots/solarized-dark.png)
 
 ## Features
 
@@ -14,7 +16,9 @@ Powerline for Bash in pure Bash script.
 * Color-coded prompt symbol according to previous command execution status.
 * Use Bash builtin when possible to reduce delay. Delay sucks!
 * No need for patched fonts.
-
+* add segment with active conda environement, if any
+* shorten path segment if longer than 30 chars
+* show host on PS1
 
 ## Installation
 
